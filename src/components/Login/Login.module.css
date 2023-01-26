@@ -1,0 +1,57 @@
+.loginContainer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+   margin-top: 100px;
+}
+.loginContainer h4{
+    margin-bottom: 0px;
+  
+}
+.loginContainer p{
+ font-size: 14px;
+ color:gray;
+ margin-bottom: 40px;
+}
+.input{
+    width:300px;
+    border: none;
+    outline:none;
+}
+
+.passwordBox{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    margin-top: 20px;
+}
+.icon{
+    
+    position: absolute;
+    right: 5px;
+    bottom:7px;
+    font-size: 18px;
+}
+.btn{
+    padding:8px 32px;
+    border-radius: 5px;
+    color:white;
+    background-color: rgb(226, 18, 18);
+    border:none;
+    outline:none;
+    display: block;
+   margin:auto;
+   margin-top: 30px;
+    
+}
+
+@media only screen 
+  and (max-device-width: 820px) 
+ {
+    .loginContainer{
+       margin-top: 300px;
+    }
+
+}

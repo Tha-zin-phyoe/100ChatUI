@@ -8,33 +8,66 @@
 }
 .container{
     border-radius: 10px;
-    width:100%;
-    height:100%;
+    width:95%;
+    height:95%;
     display: flex;
     overflow: hidden;
-    padding:10px;
+    padding:0 10px;
    
 }
 .sidebar{
     flex:1;
+ 
    
+}
+.toggleBar{
+    width:50px;
+    height:50px !important;
+    border: none !important;
+    outline:none !important;
+    border-radius: 20px !important;
+}
+.menu{
+    width:300px;
+    box-shadow: none;
 }
 
 .head{
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 0;
 }
 .container1{
-    box-shadow: 3px 0px 5px rgb(183, 180, 180);
-    background-color: rgb(216, 209, 209);
+  
     margin-bottom: 10px;
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    margin:10px;
-   
+    align-items: center; 
+    margin:10px  10px 0px 0px;
    }
+ .container1{
+ background-color: rgb(240, 243, 241);
+ border-radius: 15px;
+}
+   .container1:hover{
+    background-color: rgb(217, 218, 218);
+    border-radius: 20px;
+   }
+   .sidebarHeight{
+    height: 90vh;
+   
+  
+    overflow-y: scroll;
+   }
+   .sidebarHeight::-webkit-scrollbar {
+    background-color: rgb(170, 169, 169);
+    width:5px;
+   
+}
+.sidebarHeight::-webkit-scrollbar-thumb {
+    box-shadow: inset 0 0 6px #000;
+  }
    .text{
     display: flex;
     align-items: center;
@@ -46,19 +79,21 @@
    .team p{
     font-weight: 500;
     margin-bottom: 2px;
+    font-size: 12px;
    }
    .team span{
   
-    font-size: 14px;
+    font-size: 12px;
    }
-   .date{
+   .date p{
     color:gray;
-    font-size: 14px;
+    font-size: 12px ;
    }
    
 .chat{
-    flex: 2;
+    flex:3;
     position: relative;
+
 }
 
 .channel1{
@@ -67,9 +102,9 @@
 
 }
 .channel1 p{
-    font-size: 20px;
+    font-size: 18px;
     margin-left: 15px;
-    font-weight: 500;
+  
 }
 .header{
     display: flex;
@@ -80,24 +115,31 @@
 
 .messageContainer1{
     
-    height:300px;
+    height:380px;
     overflow-y: scroll;
-  
-  
- 
+    border-bottom: 1px solid rgb(163, 161, 161);
+    
 }
+.messageContainer1::-webkit-scrollbar {
+    background-color: rgb(170, 169, 169);
+    width:5px;
+   
+}
+.messageContainer1::-webkit-scrollbar-thumb {
+    box-shadow: inset 0 0 6px #000;
+  }
 .circle{
     display: flex;
-   gap:10px;
+   gap:5px;
     align-items: center;
-    background-color: rgb(216, 209, 209);
-    box-shadow: 3px 0px 5px rgb(183, 180, 180);
+    background-color: rgb(237, 234, 234);
+    /* box-shadow: 2px 0px 2px rgb(183, 180, 180); */
     padding: 10px;
    margin-bottom: 20px;
 }
 .circle div{
-    width: 40px;
-    height: 40px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
     background-color: rgb(218, 41, 22);
     color:white;
@@ -119,13 +161,22 @@
 .textContainer{
     display: flex;
     align-items: center;
+    padding: 0 10px;
+ 
     /* flex-direction: row-reverse; */
 
+    
+}
+.textContainer p{
+    margin-bottom: 0px;
+    background-color: rgb(234, 231, 231);
+    padding: 10px;
+    border-radius: 20px;
 }
 .chat1{
     box-shadow: 2px 0px 3px rgb(183, 180, 180);
     border-radius: 5px;
-    padding: 10px;
+    padding: 0 10px ;
     margin-bottom: 2px;
 }
 .time{
@@ -136,11 +187,13 @@
 .seen{
     display: flex;
     align-items: center;
+    padding: 0 10px;
 }
 .image{
     width:200px;
     height:200px;
     border-radius: 25px;
+   
 }
 .seen div{
     width: 20px;
@@ -176,7 +229,7 @@ width: 100%;
 }
 .bottom{
     height: 40px;
-    background-color: gray;
+  
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -195,3 +248,17 @@ width: 100%;
 
 
       
+.notification{
+    display: flex;
+     align-items: center;
+     margin-bottom: 0;
+    }
+    .notification p{
+        margin-left: 20px;
+    }
+        
+.notiContainer{
+    display: flex;
+    flex-direction: column;
+    gap:0;
+}

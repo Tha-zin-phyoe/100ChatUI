@@ -1,20 +1,30 @@
 import React ,{useEffect,useState}from 'react'
 import { BsFillGearFill,BsArrowLeft,BsSearch,BsEmojiLaughing } from "react-icons/bs";
+import InputLabel from '@mui/material/InputLabel';
+import Box from '@mui/material/Box';
+import PersonIcon from '@mui/icons-material/Person';
+import MenuItem from '@mui/material/MenuItem';
+import FormHelperText from '@mui/material/FormHelperText';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
 import {FaUser,FaPen,FaBell,FaPhoneAlt} from 'react-icons/fa'
 import {MdOutlineAttachFile ,MdSend} from "react-icons/md";
 import img from '../../assets/cat.png'
 import classes from './Home.module.css'
 import io from 'socket.io-client'
 import axios from 'axios';
+ import Profile from '../Profile/PF';
 const socket = io.connect('https://www.accesses.app')
 const Home = () => {
   const {REACT_APP_DOMAIN} = process.env;
   const id = localStorage.getItem("id")
   const [channels,setChannels] = useState([])
   let [oldmessages,setOldMessages] = useState([])
-  console.log('FHJIGH')
+  const [age, setAge] = React.useState('');
 
- 
+  const handleChange = (event) => {
+    setAge(event.target.value);
+  };
   useEffect(()=>{
     axios.get(`${REACT_APP_DOMAIN}api/chat/chat-lists/${id}`)
    .then(res=>setChannels(res.data.data))
@@ -22,6 +32,7 @@ const Home = () => {
        },[])
   useEffect(()=>{
     socket.on('receive_message',(data)=>{
+      // console.log(data.data);
       setOldMessages(oldmessages=>[...oldmessages,data.data])
     })
 
@@ -31,18 +42,65 @@ const Home = () => {
     <div className={classes.container}>
       {/* Sidebar */}
       <div className={classes.sidebar}>
+        <div>
+      <FormControl>
+
+        <Select
+       
+         sx={{
+          width: 50,
+          height: 30,
+          marginRight: 15,
+          border:'none',
+          color: "black",
+          outline:'none',
+          borderRadius:'20px',
+      
+          }}
+ 
+        >
+          <div className={classes.menu}>
+       
+          <MenuItem>
+          <div>
+          <div className={classes.notification}>
+              <FaBell style={{color:'gray'}}></FaBell>
+              <p>Notifications</p>
+          </div>  
+          <div className={classes.notification}>
+              <FaPhoneAlt style={{color:'gray'}}></FaPhoneAlt>
+              <p>Calls</p>
+           </div>
+           </div>
+          </MenuItem>
+          <MenuItem>
+            
+          </MenuItem>
+          <MenuItem value={20}>Twenty</MenuItem>
+          <MenuItem value={30} >Thirty</MenuItem>
+         
+
+          </div>
+    
+        </Select>
+      </FormControl>
+        </div>
+        {/* Latest UI Update */}
         <div className={classes.channel}>
           <div className={classes.head}>
           <h4>Messages</h4>
           <BsFillGearFill></BsFillGearFill>
           </div>
+          <div className={classes.sidebarHeight}>
           {
               channels.map(channel=>{
+                console.log("HI")
+                console.log(channel)
                   const [arr] = channel.latest_messages;
                   const channelId = arr.channel.channelId;
                   console.log(channelId)
                   console.log(arr)
-                  return   <div className={classes.container1} key={channel.id} onClick={
+                  return   <div className={classes.container1} key={channel._id} onClick={
                     ()=>{
                       axios.get(`${REACT_APP_DOMAIN}api/chat/messages/channel/${channelId}`)
                       .then(res=>setOldMessages(res.data.data))
@@ -54,12 +112,13 @@ const Home = () => {
                       <img src={img} style={{width:'50px'}}></img>
                       </div>
                       <div className={classes.team}>
-                      <p style={{fontSize:'16px'}}>{channel.name}</p>
-                      <span style={{fontSize:'16px'}}>{arr.user.userName}:</span>
+                      <p style={{fontSize:'14px'}}>{channel.name}</p>
+                      <span style={{fontSize:'14px'}}>{arr.user.userName}:</span>
                       <span>{arr.message}</span>
                       </div>   
                       <div className={classes.date}>
-                      <p style={{fontSize:'14px'}}>{arr.time}</p>
+                     
+                     
                     
                   </div>
                   </div>
@@ -68,6 +127,7 @@ const Home = () => {
               </div>
               })
             }
+            </div>
         </div>
       </div>
       {/* Sidebar */}

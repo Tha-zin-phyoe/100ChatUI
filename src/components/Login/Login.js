@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import TextField from "@mui/material/TextField";
@@ -7,11 +7,31 @@ import axios from "axios";
 
 const Login = () => {
   const { REACT_APP_DOMAIN } = process.env;
-  console.log(REACT_APP_DOMAIN)
+
+  const token = localStorage.getItem("accessToken");
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [password, setPassword] = useState("");
   const [userName, setUserName] = useState("");
+
+  useEffect(() => {
+    axios
+      .get(`${REACT_APP_DOMAIN}api/auth/user`, {
+        method: "GET",
+        headers: {
+          "x-access-token": token,
+        },
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          navigate("/home");
+          console.log("success");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
 
   const loginHandler = (e) => {
     e.preventDefault();
@@ -32,11 +52,11 @@ const Login = () => {
         }
       )
       .then((response) => {
-        console.log(response)
+        console.log(response);
         if (response.status === 200) {
           navigate("/home");
-          localStorage.setItem("accessToken",response.data.accessToken)
-          localStorage.setItem("id",response.data.id)
+          localStorage.setItem("accessToken", response.data.accessToken);
+          localStorage.setItem("id", response.data.id);
         }
       })
       .catch((error) => {

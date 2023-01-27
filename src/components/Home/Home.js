@@ -14,6 +14,7 @@ import classes from "./Home.module.css";
 import io from "socket.io-client";
 import axios from "axios";
 import ScrollToBottom from "react-scroll-to-bottom";
+import { useNavigate } from "react-router-dom";
 
 const socket = io.connect("https://www.accesses.app");
 const Home = () => {
@@ -26,6 +27,7 @@ const Home = () => {
   const [phone, setPhone] = useState("");
   const [title, setTitle] = useState({});
   const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
   console.log(name);
   console.log(phone);
@@ -143,6 +145,16 @@ const Home = () => {
                   </MenuItem>
                   <MenuItem value={20}>Twenty</MenuItem>
                   <MenuItem value={30}>Thirty</MenuItem>
+                  <MenuItem>
+                    <div
+                      onClick={(e) => {
+                        localStorage.clear();
+                        navigate("/");
+                      }}
+                      className="">
+                      Log Out
+                    </div>
+                  </MenuItem>
                 </div>
               </Select>
             </FormControl>

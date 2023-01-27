@@ -98,11 +98,11 @@
   justify-content: space-between;
   align-items: center;
 }
-
 .messageContainer1 {
-  height: 80vh;
+  height: 79vh;
   overflow-y: scroll;
-  border-bottom: 1px solid rgb(163, 161, 161);
+  margin-bottom: 20px;
+  /* border-bottom: 1px solid rgb(163, 161, 161); */
 }
 .messageContainer1::-webkit-scrollbar {
   background-color: rgb(170, 169, 169);
@@ -145,12 +145,14 @@
   display: flex;
   align-items: center;
   padding: 0 10px;
+  z-index: 5;
+  /* background-color: rgb(240, 248, 255); */
   /* flex-direction: row-reverse; */
 }
 .textContainer p {
   margin-bottom: 0px;
   background-color: rgb(234, 231, 231);
-  padding: 10px;
+  padding: 10px 20px;
   border-radius: 20px;
 }
 .chat1 {
@@ -204,8 +206,6 @@ input {
   color: black;
 }
 .bottom {
-  height: 40px;
-
   display: flex;
   justify-content: space-between;
   align-items: center;

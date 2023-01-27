@@ -47,6 +47,7 @@
 .container1:hover {
   background-color: rgb(217, 218, 218);
   border-radius: 20px;
+  cursor: pointer;
 }
 .sidebarHeight {
   height: 90vh;
@@ -102,7 +103,7 @@
   height: 79vh;
   overflow-y: scroll;
   margin-bottom: 20px;
-  /* border-bottom: 1px solid rgb(163, 161, 161); */
+  border-bottom: 1px solid rgb(163, 161, 161);
 }
 .messageContainer1::-webkit-scrollbar {
   background-color: rgb(170, 169, 169);

@@ -15,8 +15,10 @@ import io from "socket.io-client";
 import axios from "axios";
 import ScrollToBottom from "react-scroll-to-bottom";
 import { useNavigate } from "react-router-dom";
+import moment from "moment";
 
 const socket = io.connect("https://www.accesses.app");
+
 const Home = () => {
   const { REACT_APP_DOMAIN } = process.env;
   const id = localStorage.getItem("id");
@@ -67,37 +69,42 @@ const Home = () => {
   console.log("old messages", oldmessages);
 
   const sendHandler = (e) => {
-    e.preventDefault();
-    axios
-      .post(`${REACT_APP_DOMAIN}api/chat`, {
-        channel: {
-          channelId: title.id,
-          channelName: title.name,
-        },
-        media: null,
-        mension: false,
-        mensionUser: [],
-        message: message,
-        replyMessage: null,
-        replyUseName: null,
-        seenUser: [],
-        time: new Date().getMilliseconds(),
-        type: 0,
-        user: {
-          userId: id,
-          userName: name,
-        },
-      })
-      .then((response) => {
-        if (response.data.status === "success") {
-          setMessage("");
-          console.log("send message");
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    if (title.name === undefined) {
+      alert("Please Select A Channel");
+    } else {
+      e.preventDefault();
+      axios
+        .post(`${REACT_APP_DOMAIN}api/chat`, {
+          channel: {
+            channelId: title.id,
+            channelName: title.name,
+          },
+          media: null,
+          mension: false,
+          mensionUser: [],
+          message: message,
+          replyMessage: null,
+          replyUseName: null,
+          seenUser: [],
+          time: new Date().toLocaleTimeString(),
+          type: 0,
+          user: {
+            userId: id,
+            userName: name,
+          },
+        })
+        .then((response) => {
+          if (response.data.status === "success") {
+            setMessage("");
+            console.log("send message");
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   };
+  console.log("channel name", title.name);
 
   return (
     <div className={classes.home}>
@@ -143,8 +150,7 @@ const Home = () => {
                       <p>Calls</p>
                     </div>
                   </MenuItem>
-                  <MenuItem value={20}>Twenty</MenuItem>
-                  <MenuItem value={30}>Thirty</MenuItem>
+
                   <MenuItem>
                     <div
                       onClick={(e) => {
@@ -203,10 +209,12 @@ const Home = () => {
                             {channel?.latest_messages[0]?.user?.userName}
                           </span>
                           <span>{channel?.latest_messages[0]?.message}</span>
+                          <span
+                            style={{ fontSize: "10px", marginLeft: "90px" }}
+                            className={classes.date}>
+                            {moment().fromNow(channel?.latest_messages[0].time)}
+                          </span>
                         </div>
-                        {/* <span style={{ fontSize: "10px", float: "end" }} className={classes.date}>
-                          {channel?.latest_messages[0].time}
-                        </span> */}
                       </div>
                     </div>
                   );
@@ -223,7 +231,7 @@ const Home = () => {
             <div className={classes.channel1}>
               <BsArrowLeft style={{ marginRight: "20px" }}></BsArrowLeft>
               {/* <img src={img} style={{ width: "30px", height: "30px" }}></img> */}
-              {title.length !== 0 ? <p>{title.name}</p> : <p>Please Select Channel</p>}
+              {title.name !== "" ? <p>{title.name}</p> : <p>Please Select Channel</p>}
             </div>
             <BsSearch></BsSearch>
           </div>
@@ -261,7 +269,7 @@ const Home = () => {
           {/* message section end */}
 
           {/* Bottom */}
-          <form className={classes.bottom}>
+          <form className={classes.bottom} onSubmit={sendHandler}>
             <input
               className={classes.input}
               placeholder="Type a Message"

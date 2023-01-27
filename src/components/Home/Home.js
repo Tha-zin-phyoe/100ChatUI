@@ -20,27 +20,26 @@ const Home = () => {
   const id = localStorage.getItem("id")
   const token = localStorage.getItem("accessToken")
   const [channels,setChannels] = useState([])
-  let [oldmessages,setOldMessages] = useState([])
-  useEffect(() => {
-    axios
-      .get(`${REACT_APP_DOMAIN}api/auth/user`, {
-        method: "GET",
-        headers: {
-          "x-access-token": token,
-        },
-      })
-      .then((response) => {
-        if (response.status === 200) {
-         console.log("Successful")
-        }
-      })
-      .catch((error) => {
-        if (error.response.status === 401) {
-          window.location.href("/");
-        }
- 
-      });
-  }, []);
+  const [oldmessages,setOldMessages] = useState([])
+  const [name,setName]=useState('')
+  const [phone,setPhone]=useState('')
+  console.log(name)
+  console.log(phone)
+
+  useEffect(()=>{
+axios.get(`${REACT_APP_DOMAIN}api/auth/user`,{
+  
+           method: "GET",
+          headers: {
+            "x-access-token": token,
+          },
+})
+.then(res=>{
+  setName(res.data.results.name)
+  setPhone(res.data.results.phone)
+}
+)
+  },[])
   useEffect(()=>{
     axios.get(`${REACT_APP_DOMAIN}api/chat/chat-lists/${id}`)
    .then(res=>setChannels(res.data.data))
@@ -73,6 +72,7 @@ const Home = () => {
           borderRadius:'20px',
       
           }}
+          
  
         >
     <div className={classes.menu}>
@@ -82,8 +82,8 @@ const Home = () => {
                 <FaUser style={{color:'white',fontSize:"30px"}}></FaUser>
                 </div>
                 <div className={classes.name}>
-                  <h4>Chris Brown</h4>
-                  <span>+09965353164</span>
+                  <h4>{name}</h4>
+                  <span>{phone}</span>
                 </div>
           </div>
         </MenuItem>

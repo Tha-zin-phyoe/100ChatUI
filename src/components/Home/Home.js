@@ -181,12 +181,14 @@ const Home = () => {
                       className={classes.container1}
                       key={index}
                       onClick={() => {
+                        console.log(channel.id);
+                        console.log("channel data", channel);
                         setTitle({
                           name: channel?.name,
                           id: channel?.id,
                         });
                         axios
-                          .get(`${REACT_APP_DOMAIN}api/chat/messages/channel/${channel.channelId}`)
+                          .get(`${REACT_APP_DOMAIN}api/chat/messages/channel/${channel.id}`)
                           .then((res) => setOldMessages(res.data.data.reverse()))
                           .catch((err) => console.log(err));
                       }}>
@@ -198,11 +200,13 @@ const Home = () => {
                           <p style={{ fontSize: "14px", fontWeight: "bold" }}>{channel?.name}</p>
                           <span
                             style={{ fontSize: "14px", fontWeight: "bold", marginRight: "10px" }}>
-                            {channel?.user?.userName}:
+                            {channel?.latest_messages[0]?.user?.userName}
                           </span>
-                          <span>{channel.message}</span>
+                          <span>{channel?.latest_messages[0]?.message}</span>
                         </div>
-                        <div className={classes.date}></div>
+                        {/* <span style={{ fontSize: "10px", float: "end" }} className={classes.date}>
+                          {channel?.latest_messages[0].time}
+                        </span> */}
                       </div>
                     </div>
                   );

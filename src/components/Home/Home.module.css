@@ -276,3 +276,9 @@ input {
 .other .textContainer p {
   background-color: aliceblue !important;
 }
+.channelInfoContainer {
+  height: 80vh;
+}
+.channelInfoContainer:hover {
+  cursor: pointer;
+}

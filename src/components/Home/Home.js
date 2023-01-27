@@ -15,11 +15,25 @@ import io from "socket.io-client";
 import axios from "axios";
 import ScrollToBottom from "react-scroll-to-bottom";
 import { useNavigate } from "react-router-dom";
-import moment from "moment";
+import InfoIcon from "@mui/icons-material/Info";
+
+import SwipeableDrawer from "@mui/material/SwipeableDrawer";
+import Button from "@mui/material/Button";
+import List from "@mui/material/List";
+import Divider from "@mui/material/Divider";
+import ListItem from "@mui/material/ListItem";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import InboxIcon from "@mui/icons-material/MoveToInbox";
+import MailIcon from "@mui/icons-material/Mail";
 
 const socket = io.connect("https://www.accesses.app");
 
 const Home = () => {
+  const [state, setState] = React.useState({
+    right: false,
+  });
   const { REACT_APP_DOMAIN } = process.env;
   const id = localStorage.getItem("id");
   const token = localStorage.getItem("accessToken");
@@ -33,6 +47,44 @@ const Home = () => {
 
   console.log(name);
   console.log(phone);
+
+  const toggleDrawer = (anchor, open) => (event) => {
+    if (event && event.type === "keydown" && (event.key === "Tab" || event.key === "Shift")) {
+      return;
+    }
+
+    setState({ ...state, [anchor]: open });
+  };
+  const list = (anchor) => (
+    <Box
+      sx={{ width: anchor === "top" || anchor === "bottom" ? "auto" : 250 }}
+      role="presentation"
+      onClick={toggleDrawer(anchor, false)}
+      onKeyDown={toggleDrawer(anchor, false)}>
+      <List>
+        <div className={classes.channelInfoContainer}>
+          <img
+            src=""
+            alt=""
+            style={{
+              width: "80px",
+              height: "80px",
+              borderRadius: "50%",
+              border: "1px solid #7f7f7f",
+              margin: "10px 80px",
+            }}
+          />
+          <div style={{ marginLeft: "20px", fontSize: "14px", marginTop: "40px" }}>
+            Channel Name
+          </div>
+          <p style={{ textAlign: "center", fontWeight: 700 }}>{title.name}</p>
+          <span style={{ margin: "20px", fontSize: "14px", fontWeight: "600", color: "#7f7f7f" }}>
+            Users
+          </span>
+        </div>
+      </List>
+    </Box>
+  );
 
   useEffect(() => {
     axios
@@ -69,6 +121,7 @@ const Home = () => {
   console.log("old messages", oldmessages);
 
   const sendHandler = (e) => {
+    setMessage("");
     if (title.name === undefined) {
       alert("Please Select A Channel");
     } else {
@@ -95,7 +148,6 @@ const Home = () => {
         })
         .then((response) => {
           if (response.data.status === "success") {
-            setMessage("");
             console.log("send message");
           }
         })
@@ -151,15 +203,12 @@ const Home = () => {
                     </div>
                   </MenuItem>
 
-                  <MenuItem>
-                    <div
-                      onClick={(e) => {
-                        localStorage.clear();
-                        navigate("/");
-                      }}
-                      className="">
-                      Log Out
-                    </div>
+                  <MenuItem
+                    onClick={(e) => {
+                      localStorage.clear();
+                      navigate("/");
+                    }}>
+                    <div className="">Log Out</div>
                   </MenuItem>
                 </div>
               </Select>
@@ -212,7 +261,7 @@ const Home = () => {
                           <span
                             style={{ fontSize: "10px", marginLeft: "90px" }}
                             className={classes.date}>
-                            {moment().fromNow(channel?.latest_messages[0].time)}
+                            {channel?.latest_messages[0].time}
                           </span>
                         </div>
                       </div>
@@ -233,7 +282,28 @@ const Home = () => {
               {/* <img src={img} style={{ width: "30px", height: "30px" }}></img> */}
               {title.name !== "" ? <p>{title.name}</p> : <p>Please Select Channel</p>}
             </div>
-            <BsSearch></BsSearch>
+
+            <div className="">
+              <BsSearch></BsSearch>
+              {title.name === undefined ? (
+                <div></div>
+              ) : (
+                ["right"].map((anchor) => (
+                  <React.Fragment key={anchor}>
+                    <Button onClick={toggleDrawer(anchor, true)}>
+                      <InfoIcon />
+                    </Button>
+                    <SwipeableDrawer
+                      anchor={anchor}
+                      open={state[anchor]}
+                      onClose={toggleDrawer(anchor, false)}
+                      onOpen={toggleDrawer(anchor, true)}>
+                      {list(anchor)}
+                    </SwipeableDrawer>
+                  </React.Fragment>
+                ))
+              )}
+            </div>
           </div>
 
           {/* messages section */}

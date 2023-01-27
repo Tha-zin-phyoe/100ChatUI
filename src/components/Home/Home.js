@@ -166,43 +166,48 @@ const Home = () => {
               <BsFillGearFill></BsFillGearFill>
             </div>
             <div className={classes.sidebarHeight}>
-              {channels.map((channel) => {
-                console.log("HI");
-                console.log(channel);
-                const [arr] = channel.latest_messages;
-                const channelId = arr.channel.channelId;
-                console.log(channelId);
-                console.log(arr);
-                return (
-                  <div
-                    className={classes.container1}
-                    key={channel._id}
-                    onClick={() => {
-                      setTitle({
-                        name: channel.name,
-                        id: channel.id,
-                      });
-                      axios
-                        .get(`${REACT_APP_DOMAIN}api/chat/messages/channel/${channelId}`)
-                        .then((res) => setOldMessages(res.data.data.reverse()))
-                        .catch((err) => console.log(err));
-                    }}>
-                    <div className={classes.text}>
-                      <div>
-                        <img src={img} style={{ width: "50px" }}></img>
+              {channels?.length === 0 ? (
+                <p>There is no channels</p>
+              ) : (
+                channels.map((channel, index) => {
+                  // console.log("HI");
+                  // console.log(channel);
+                  // const [arr] = channel?.latest_messages;
+                  // const channelId = arr?.channel?.channelId;
+                  // console.log(channelId);
+                  // console.log(arr);
+                  return (
+                    <div
+                      className={classes.container1}
+                      key={index}
+                      onClick={() => {
+                        setTitle({
+                          name: channel?.name,
+                          id: channel?.id,
+                        });
+                        axios
+                          .get(`${REACT_APP_DOMAIN}api/chat/messages/channel/${channel.channelId}`)
+                          .then((res) => setOldMessages(res.data.data.reverse()))
+                          .catch((err) => console.log(err));
+                      }}>
+                      <div className={classes.text}>
+                        <div>
+                          <img src={img} style={{ width: "50px" }}></img>
+                        </div>
+                        <div className={classes.team}>
+                          <p style={{ fontSize: "14px", fontWeight: "bold" }}>{channel?.name}</p>
+                          <span
+                            style={{ fontSize: "14px", fontWeight: "bold", marginRight: "10px" }}>
+                            {channel?.user?.userName}:
+                          </span>
+                          <span>{channel.message}</span>
+                        </div>
+                        <div className={classes.date}></div>
                       </div>
-                      <div className={classes.team}>
-                        <p style={{ fontSize: "14px", fontWeight: "bold" }}>{channel.name}</p>
-                        <span style={{ fontSize: "14px", fontWeight: "bold", marginRight: "10px" }}>
-                          {arr.user.userName}:
-                        </span>
-                        <span>{arr.message}</span>
-                      </div>
-                      <div className={classes.date}></div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })
+              )}
             </div>
           </div>
         </div>
@@ -227,10 +232,10 @@ const Home = () => {
                   <div
                     key={index}
                     className={
-                      oldmessage.user.userName === name ? `${classes.me}` : `${classes.other}`
+                      oldmessage?.user?.userName === name ? `${classes.me}` : `${classes.other}`
                     }>
                     <div className={classes.textContainer}>
-                      <div className={classes.cir}>{oldmessage.user.userName.slice(0, 1)}</div>
+                      <div className={classes.cir}>{oldmessage?.user?.userName?.slice(0, 1)}</div>
                       <div>
                         {oldmessage.media ? (
                           <img src={oldmessage.media} className={classes.image}></img>

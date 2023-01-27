@@ -255,10 +255,42 @@ width: 100%;
     }
     .notification p{
         margin-left: 20px;
+       font-size: 14px;
     }
         
 .notiContainer{
     display: flex;
     flex-direction: column;
     gap:0;
+}
+.user{
+    display: flex;
+    /* align-items: center; */
+    gap:30px;
+
+}
+.userIcon{
+    width:50px;
+    height:50px;
+    background-color: rgb(216, 209, 209);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+   
+}
+.name{
+    margin-left: 30px;
+    margin-top: -20px;
+}
+.name h4{
+    margin-bottom: 5px;
+    font-weight: bold;
+    color:rgb(63, 61, 61);
+    font-size: 16px;
+}
+.name span{
+    font-size: 14px;
+    color:rgb(63, 61, 61);
 }

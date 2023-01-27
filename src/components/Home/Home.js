@@ -59,22 +59,32 @@ const Home = () => {
           }}
  
         >
-          <div className={classes.menu}>
+    <div className={classes.menu}>
+        <MenuItem>
+          <div className={classes.user}>
+                <div className={classes.userIcon}>
+                <FaUser style={{color:'white',fontSize:"30px"}}></FaUser>
+                </div>
+                <div className={classes.name}>
+                  <h4>Chris Brown</h4>
+                  <span>+09965353164</span>
+                </div>
+          </div>
+        </MenuItem>
        
           <MenuItem>
-          <div>
-          <div className={classes.notification}>
-              <FaBell style={{color:'gray'}}></FaBell>
-              <p>Notifications</p>
-          </div>  
-          <div className={classes.notification}>
-              <FaPhoneAlt style={{color:'gray'}}></FaPhoneAlt>
-              <p>Calls</p>
-           </div>
-           </div>
+                <div className={classes.notiContainer }>
+                <div className={classes.notification}>
+                    <FaBell style={{color:'gray'}}></FaBell>
+                    <p>Notifications</p>
+                </div>  
+                <div className={classes.notification}>
+                    <FaPhoneAlt style={{color:'gray'}}></FaPhoneAlt>
+                    <p>Calls</p>
+                </div>
+                </div>
           </MenuItem>
-          <MenuItem>
-            
+          <MenuItem> 
           </MenuItem>
           <MenuItem value={20}>Twenty</MenuItem>
           <MenuItem value={30} >Thirty</MenuItem>

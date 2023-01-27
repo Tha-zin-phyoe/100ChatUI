@@ -13,18 +13,34 @@ import img from '../../assets/cat.png'
 import classes from './Home.module.css'
 import io from 'socket.io-client'
 import axios from 'axios';
- import Profile from '../Profile/PF';
+
 const socket = io.connect('https://www.accesses.app')
 const Home = () => {
   const {REACT_APP_DOMAIN} = process.env;
   const id = localStorage.getItem("id")
+  const token = localStorage.getItem("accessToken")
   const [channels,setChannels] = useState([])
   let [oldmessages,setOldMessages] = useState([])
-  const [age, setAge] = React.useState('');
-
-  const handleChange = (event) => {
-    setAge(event.target.value);
-  };
+  useEffect(() => {
+    axios
+      .get(`${REACT_APP_DOMAIN}api/auth/user`, {
+        method: "GET",
+        headers: {
+          "x-access-token": token,
+        },
+      })
+      .then((response) => {
+        if (response.status === 200) {
+         console.log("Successful")
+        }
+      })
+      .catch((error) => {
+        if (error.response.status === 401) {
+          window.location.href("/");
+        }
+ 
+      });
+  }, []);
   useEffect(()=>{
     axios.get(`${REACT_APP_DOMAIN}api/chat/chat-lists/${id}`)
    .then(res=>setChannels(res.data.data))
@@ -152,17 +168,7 @@ const Home = () => {
            </div>
         <BsSearch></BsSearch>
         </div>
-        {/* Cricle */}
-        <div>
-            <div className={classes.circle}>
-            <div>A</div>
-            <div>B</div>
-            <div>C</div>
-            <div>D</div>
-            <div>E</div>
-            </div>
-        </div>
-        {/* Message Container */}
+  
         <div className={classes.messageContainer1}>
         {
           oldmessages.map(oldmessage=>{
@@ -179,14 +185,7 @@ const Home = () => {
           
             </div>
         </div>
-        <div className={classes.right}>
-            <div></div>
-            <div className={classes.seen}>
-               <div>A</div>
-               <div>B</div>
-                <div></div>
-            </div>
-            </div>
+    
         </div>
      
             )

@@ -285,3 +285,20 @@ input {
 .channelInfoContainer:hover {
   cursor: pointer;
 }
+.animate {
+  animation: blink 3s 3;
+}
+@keyframes blink {
+  0% {
+    opacity: 1;
+    background-color: #007bff40;
+  }
+  50% {
+    opacity: 0.2;
+    background-color: #007bff40;
+  }
+  100% {
+    opacity: 1;
+    background-color: #007bff40;
+  }
+}

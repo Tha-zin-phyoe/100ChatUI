@@ -41,6 +41,7 @@
   margin: 10px 10px 0px 0px;
 }
 .container1 {
+  height: 100px;
   background-color: rgb(240, 243, 241);
   border-radius: 15px;
 }

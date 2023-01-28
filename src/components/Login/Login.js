@@ -53,7 +53,7 @@ const Login = () => {
       )
       .then((response) => {
         console.log(response);
-        if (response.status === 200) {
+        if (response.status === 200 || response.code === 200) {
           navigate("/home");
           localStorage.setItem("accessToken", response.data.accessToken);
           localStorage.setItem("id", response.data.id);

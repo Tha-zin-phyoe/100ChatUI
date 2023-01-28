@@ -74,7 +74,7 @@ const Home = () => {
       <List>
         <div className={classes.channelInfoContainer}>
           <img
-            src=""
+            src={img}
             alt=""
             style={{
               width: "80px",

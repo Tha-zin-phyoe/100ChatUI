@@ -1,4 +1,4 @@
-import React, { useEffect, useState, changeEvent } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { BsFillGearFill, BsArrowLeft, BsSearch, BsEmojiLaughing } from "react-icons/bs";
 import InputLabel from "@mui/material/InputLabel";
 import Box from "@mui/material/Box";
@@ -29,6 +29,10 @@ import ListItemText from "@mui/material/ListItemText";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
 
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import NotificationSound from "../../assets/mixkit-interface-option-select-2573.wav";
+
 const socket = io.connect("https://www.accesses.app");
 
 const Home = () => {
@@ -46,9 +50,13 @@ const Home = () => {
   const [messageData, setMessageData] = useState("");
   // const [file, setFile] = useState();
   const navigate = useNavigate();
+  const [noti, setNoti] = useState("");
+  const [notiMessage, setNotiMessage] = useState("");
 
-  console.log(name);
-  console.log(phone);
+  const audioPlayer = useRef(null);
+
+  // console.log(name);
+  // console.log(phone);
 
   const toggleDrawer = (anchor, open) => (event) => {
     if (event && event.type === "keydown" && (event.key === "Tab" || event.key === "Shift")) {
@@ -111,7 +119,7 @@ const Home = () => {
     axios
       .get(`${REACT_APP_DOMAIN}api/chat/chat-lists/${id}`)
       .then((res) => {
-        console.log("channel response", res.data.data);
+        // console.log("channel response", res.data.data);
         if (res.data.status === "OK" || res.status === 200 || res.data.code === 200) {
           setChannels(res?.data?.data);
         }
@@ -121,8 +129,15 @@ const Home = () => {
 
   useEffect(() => {
     socket.on("receive_message", (data) => {
+      const dataSocket = data.data;
+      console.log("send user name", name);
+      console.log("socket received user name", data.data.user.userName);
       // console.log(data.data);
       setOldMessages((oldmessages) => [...oldmessages, data?.data]);
+      // console.log("socket ", data.data);
+      setNoti(data.data.user.userName);
+      setNotiMessage(data.data.message);
+      console.log(noti);
     });
   }, [socket]);
 
@@ -131,6 +146,15 @@ const Home = () => {
   // }, [oldmessages]);
   // oldmessages.reverse();
   console.log("old messages", oldmessages);
+
+  useEffect(() => {
+    return () => {
+      if (noti !== name) {
+        toast(`${noti} : ${notiMessage}`);
+        audioPlayer.current.play();
+      }
+    };
+  }, [noti]);
 
   const sendHandler = (e) => {
     setMessageData("");
@@ -180,6 +204,19 @@ const Home = () => {
 
   return (
     <div className={classes.home}>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
+      <audio ref={audioPlayer} src={NotificationSound} />
       <div className={classes.container}>
         {/* Sidebar */}
         <div className={classes.sidebar}>

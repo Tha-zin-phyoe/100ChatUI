@@ -196,6 +196,7 @@ const Home = () => {
         })
         .then((response) => {
           if (response?.data?.status === "success" || response?.code === 200) {
+            setChange(!change);
             console.log("send message");
           }
         })

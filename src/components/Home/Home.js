@@ -44,6 +44,7 @@ const Home = () => {
   const [title, setTitle] = useState({});
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
+  const [change,setChange] = useState(true)
 
   console.log(name);
   console.log(phone);
@@ -105,7 +106,7 @@ const Home = () => {
       .get(`${REACT_APP_DOMAIN}api/chat/chat-lists/${id}`)
       .then((res) => setChannels(res.data.data))
       .catch((err) => console.log(err));
-  }, []);
+  }, [change]);
 
   useEffect(() => {
     socket.on("receive_message", (data) => {
@@ -113,19 +114,30 @@ const Home = () => {
       setOldMessages((oldmessages) => [...oldmessages, data.data]);
     });
   }, [socket]);
+  useEffect(()=>{
+     socket.on('getNotification', (data) => {
+  console.log("TZ")
+   console.log(data)
+   });
+
+  },[socket])
 
   // useEffect(() => {
   //   oldmessages.reverse();
   // }, [oldmessages]);
   // oldmessages.reverse();
-  console.log("old messages", oldmessages);
+  console.log("old messages", oldmessages[0]);
 
   const sendHandler = (e) => {
     setMessage("");
+    
+
+  
     if (title.name === undefined) {
       alert("Please Select A Channel");
     } else {
       e.preventDefault();
+      
       axios
         .post(`${REACT_APP_DOMAIN}api/chat`, {
           channel: {
@@ -148,13 +160,17 @@ const Home = () => {
         })
         .then((response) => {
           if (response.data.status === "success") {
+            setChange(!change)
             console.log("send message");
           }
         })
         .catch((error) => {
           console.log(error);
         });
+      
     }
+  
+
   };
   console.log("channel name", title.name);
 
@@ -278,7 +294,7 @@ const Home = () => {
           {/* Header */}
           <div className={classes.header}>
             <div className={classes.channel1}>
-              <BsArrowLeft style={{ marginRight: "20px" }}></BsArrowLeft>
+           
               {/* <img src={img} style={{ width: "30px", height: "30px" }}></img> */}
               {title.name !== "" ? <p>{title.name}</p> : <p>Please Select Channel</p>}
             </div>

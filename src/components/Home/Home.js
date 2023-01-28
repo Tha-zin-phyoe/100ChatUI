@@ -135,9 +135,13 @@ const Home = () => {
       // console.log(data.data);
       setOldMessages((oldmessages) => [...oldmessages, data?.data]);
       // console.log("socket ", data.data);
-      setNoti(data.data.user.userName);
-      setNotiMessage(data.data.message);
-      console.log(noti);
+      if (data.data.user.userName !== name) {
+        toast(`${dataSocket.user.userName} : ${dataSocket.message}`);
+        audioPlayer.current.play();
+      }
+      // setNoti(() => data.data.user.userName);
+      // setNotiMessage(() => data.data.message);
+      // console.log(noti);
     });
   }, [socket]);
 
@@ -147,14 +151,14 @@ const Home = () => {
   // oldmessages.reverse();
   console.log("old messages", oldmessages);
 
-  useEffect(() => {
-    return () => {
-      if (noti !== name) {
-        toast(`${noti} : ${notiMessage}`);
-        audioPlayer.current.play();
-      }
-    };
-  }, [noti]);
+  // useEffect(() => {
+  //   return () => {
+  //     if (noti !== name) {
+  //       toast(`${noti} : ${notiMessage}`);
+  //       audioPlayer.current.play();
+  //     }
+  //   };
+  // }, [noti]);
 
   const sendHandler = (e) => {
     setMessageData("");

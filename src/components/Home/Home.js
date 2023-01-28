@@ -9,7 +9,7 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import { FaUser, FaPen, FaBell, FaPhoneAlt } from "react-icons/fa";
 import { MdOutlineAttachFile, MdSend } from "react-icons/md";
-import img from "../../assets/cat.png";
+import img from "../../assets/logo.png";
 import classes from "./Home.module.css";
 import io from "socket.io-client";
 import axios from "axios";

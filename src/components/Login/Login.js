@@ -4,6 +4,7 @@ import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import TextField from "@mui/material/TextField";
 import classes from "./Login.module.css";
 import axios from "axios";
+import logo from "../../assets/logo.png";
 
 const Login = () => {
   const { REACT_APP_DOMAIN } = process.env;
@@ -66,6 +67,7 @@ const Login = () => {
 
   return (
     <div className={classes.loginContainer}>
+      <img src={logo} alt="" style={{ width: "120px" }} />
       <h4>Enter user ID</h4>
       <p>Please enter your user ID</p>
       <form>

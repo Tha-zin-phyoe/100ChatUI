@@ -52,6 +52,7 @@ const Home = () => {
   const navigate = useNavigate();
   const [noti, setNoti] = useState("");
   const [notiMessage, setNotiMessage] = useState("");
+  const [change, setChange] = useState(true);
 
   const audioPlayer = useRef(null);
 
@@ -125,7 +126,7 @@ const Home = () => {
         }
       })
       .catch((err) => console.log(err));
-  }, []);
+  }, [change]);
 
   useEffect(() => {
     socket.on("receive_message", (data) => {
@@ -142,6 +143,13 @@ const Home = () => {
       // setNoti(() => data.data.user.userName);
       // setNotiMessage(() => data.data.message);
       // console.log(noti);
+    });
+  }, [socket]);
+
+  useEffect(() => {
+    socket.on("getNotification", (data) => {
+      console.log("TZ");
+      console.log(data);
     });
   }, [socket]);
 

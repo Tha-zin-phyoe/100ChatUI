@@ -148,10 +148,12 @@
   align-items: center;
   padding: 0 10px;
   z-index: 5;
+
   /* background-color: rgb(240, 248, 255); */
   /* flex-direction: row-reverse; */
 }
 .textContainer p {
+  max-width: 45vw;
   margin-bottom: 0px;
   background-color: rgb(234, 231, 231);
   padding: 10px 20px;

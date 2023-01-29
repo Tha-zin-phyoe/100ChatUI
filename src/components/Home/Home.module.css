@@ -282,3 +282,8 @@ input {
 .channelInfoContainer:hover {
   cursor: pointer;
 }
+.userName{
+  margin-left: 20px;
+  font-size: 14px;
+  text-transform: capitalize;
+}

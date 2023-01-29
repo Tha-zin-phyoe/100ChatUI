@@ -16,18 +16,14 @@ import axios from "axios";
 import ScrollToBottom from "react-scroll-to-bottom";
 import { useNavigate } from "react-router-dom";
 import InfoIcon from "@mui/icons-material/Info";
-
+import EmojiPicker from 'emoji-picker-react';
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import Button from "@mui/material/Button";
 import List from "@mui/material/List";
-import Divider from "@mui/material/Divider";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
-
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Picker from '@emoji-mart/react'
+import data from '@emoji-mart/data'
 const socket = io.connect("https://www.accesses.app");
 
 const Home = () => {
@@ -37,17 +33,18 @@ const Home = () => {
   const { REACT_APP_DOMAIN } = process.env;
   const id = localStorage.getItem("id");
   const token = localStorage.getItem("accessToken");
+  console.log(token)
+ 
   const [channels, setChannels] = useState([]);
   const [oldmessages, setOldMessages] = useState([]);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [title, setTitle] = useState({});
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState('');
   const navigate = useNavigate();
-  const [change,setChange] = useState(true)
-
-  console.log(name);
-  console.log(phone);
+  const [change,setChange] = useState(true);
+ 
+const [users,setUsers]= useState([])
 
   const toggleDrawer = (anchor, open) => (event) => {
     if (event && event.type === "keydown" && (event.key === "Tab" || event.key === "Shift")) {
@@ -82,6 +79,9 @@ const Home = () => {
           <span style={{ margin: "20px", fontSize: "14px", fontWeight: "600", color: "#7f7f7f" }}>
             Users
           </span>
+        {
+          users?.map(user=><p className={classes.userName}>{user.name}</p>)
+        }
         </div>
       </List>
     </Box>
@@ -110,22 +110,13 @@ const Home = () => {
 
   useEffect(() => {
     socket.on("receive_message", (data) => {
-      // console.log(data.data);
+    
       setOldMessages((oldmessages) => [...oldmessages, data.data]);
+     
     });
   }, [socket]);
-  useEffect(()=>{
-     socket.on('getNotification', (data) => {
-  console.log("TZ")
-   console.log(data)
-   });
 
-  },[socket])
 
-  // useEffect(() => {
-  //   oldmessages.reverse();
-  // }, [oldmessages]);
-  // oldmessages.reverse();
   console.log("old messages", oldmessages[0]);
 
   const sendHandler = (e) => {
@@ -137,6 +128,7 @@ const Home = () => {
       alert("Please Select A Channel");
     } else {
       e.preventDefault();
+     
       
       axios
         .post(`${REACT_APP_DOMAIN}api/chat`, {
@@ -144,7 +136,7 @@ const Home = () => {
             channelId: title.id,
             channelName: title.name,
           },
-          media: null,
+          media:null,
           mension: false,
           mensionUser: [],
           message: message,
@@ -172,7 +164,10 @@ const Home = () => {
   
 
   };
+
+
   console.log("channel name", title.name);
+  console.log(users)
 
   return (
     <div className={classes.home}>
@@ -217,6 +212,10 @@ const Home = () => {
                       <FaPhoneAlt style={{ color: "gray" }}></FaPhoneAlt>
                       <p>Calls</p>
                     </div>
+                  </MenuItem>
+                  <MenuItem>
+               
+               
                   </MenuItem>
 
                   <MenuItem
@@ -297,6 +296,8 @@ const Home = () => {
            
               {/* <img src={img} style={{ width: "30px", height: "30px" }}></img> */}
               {title.name !== "" ? <p>{title.name}</p> : <p>Please Select Channel</p>}
+              
+              
             </div>
 
             <div className="">
@@ -307,7 +308,20 @@ const Home = () => {
                 ["right"].map((anchor) => (
                   <React.Fragment key={anchor}>
                     <Button onClick={toggleDrawer(anchor, true)}>
-                      <InfoIcon />
+                      <InfoIcon onClick={()=>{
+                         axios.get(`${REACT_APP_DOMAIN}api/channels/${title.id}`,{
+                          method:"GET",
+                          headers:{
+                          
+                            "x-access-token":token,
+                          }
+                         })
+                         .then((res) => {
+                          console.log('TZ')
+                          console.log(res)
+                          setUsers(res.data.results.users)
+                         });
+                      }}/>
                     </Button>
                     <SwipeableDrawer
                       anchor={anchor}
@@ -341,6 +355,7 @@ const Home = () => {
                           <>
                             {" "}
                             <p className={classes.chat}>{oldmessage.message}</p>
+                         
                             <span className={classes.time}>{oldmessage.time}</span>
                           </>
                         )}
@@ -364,7 +379,6 @@ const Home = () => {
                 setMessage(e.target.value);
               }}></input>
             <div className={classes.send}>
-              <BsEmojiLaughing></BsEmojiLaughing>
               <input type="file" style={{ display: "none" }} id="file"></input>
               <label htmlFor="file" style={{ marginLeft: "20px" }}>
                 <MdOutlineAttachFile></MdOutlineAttachFile>

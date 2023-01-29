@@ -41,6 +41,7 @@
   margin: 10px 10px 0px 0px;
 }
 .container1 {
+  height: 100px;
   background-color: rgb(240, 243, 241);
   border-radius: 15px;
 }
@@ -147,10 +148,12 @@
   align-items: center;
   padding: 0 10px;
   z-index: 5;
+
   /* background-color: rgb(240, 248, 255); */
   /* flex-direction: row-reverse; */
 }
 .textContainer p {
+  max-width: 45vw;
   margin-bottom: 0px;
   background-color: rgb(234, 231, 231);
   padding: 10px 20px;
@@ -281,4 +284,28 @@ input {
 }
 .channelInfoContainer:hover {
   cursor: pointer;
+}
+.animate {
+  animation: blink 3s 3;
+}
+@keyframes blink {
+  0% {
+    opacity: 1;
+    background-color: #007bff40;
+  }
+  50% {
+    opacity: 0.2;
+    background-color: #007bff40;
+  }
+  100% {
+    opacity: 1;
+    background-color: #007bff40;
+  }
+}
+.userContainer {
+  height: 60px;
+  transition: all 0.3s ease-in-out;
+}
+.userContainer:hover {
+  background-color: aliceblue;
 }

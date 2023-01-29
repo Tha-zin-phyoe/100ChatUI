@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { BsFillGearFill, BsArrowLeft, BsSearch, BsEmojiLaughing } from "react-icons/bs";
 import InputLabel from "@mui/material/InputLabel";
 import Box from "@mui/material/Box";
@@ -9,13 +9,14 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import { FaUser, FaPen, FaBell, FaPhoneAlt } from "react-icons/fa";
 import { MdOutlineAttachFile, MdSend } from "react-icons/md";
-import img from "../../assets/cat.png";
+import img from "../../assets/logo.png";
 import classes from "./Home.module.css";
 import io from "socket.io-client";
 import axios from "axios";
 import ScrollToBottom from "react-scroll-to-bottom";
 import { useNavigate } from "react-router-dom";
 import InfoIcon from "@mui/icons-material/Info";
+import EmojiPicker from "emoji-picker-react";
 
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import Button from "@mui/material/Button";
@@ -27,6 +28,10 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
+
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import NotificationSound from "../../assets/mixkit-interface-option-select-2573.wav";
 
 const socket = io.connect("https://www.accesses.app");
 
@@ -42,11 +47,18 @@ const Home = () => {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [title, setTitle] = useState({});
-  const [message, setMessage] = useState("");
+  const [messageData, setMessageData] = useState("");
+  // const [file, setFile] = useState();
   const navigate = useNavigate();
+  const [noti, setNoti] = useState("");
+  const [notiMessage, setNotiMessage] = useState("");
+  const [change, setChange] = useState(true);
+  const [users, setUsers] = useState([]);
 
-  console.log(name);
-  console.log(phone);
+  const audioPlayer = useRef(null);
+
+  // console.log(name);
+  // console.log(phone);
 
   const toggleDrawer = (anchor, open) => (event) => {
     if (event && event.type === "keydown" && (event.key === "Tab" || event.key === "Shift")) {
@@ -64,7 +76,7 @@ const Home = () => {
       <List>
         <div className={classes.channelInfoContainer}>
           <img
-            src=""
+            src={img}
             alt=""
             style={{
               width: "80px",
@@ -78,9 +90,34 @@ const Home = () => {
             Channel Name
           </div>
           <p style={{ textAlign: "center", fontWeight: 700 }}>{title.name}</p>
-          <span style={{ margin: "20px", fontSize: "14px", fontWeight: "600", color: "#7f7f7f" }}>
+          <div
+            style={{
+              margin: "20px",
+              marginBottom: "15px",
+              fontSize: "14px",
+              fontWeight: "600",
+              color: "#7f7f7f",
+            }}>
             Users
-          </span>
+          </div>
+          {users?.map((user, index) => (
+            <div
+              key={index}
+              className={classes.userContainer}
+              style={{ display: "flex", alignItems: "center" }}>
+              <img
+                src={img}
+                alt=""
+                style={{
+                  width: "30px",
+                  margin: "10px",
+                  border: "2px solid #7f7f7f",
+                  borderRadius: "50%",
+                }}
+              />
+              <p className={classes.userName}>{user.name}</p>
+            </div>
+          ))}
         </div>
       </List>
     </Box>
@@ -95,22 +132,51 @@ const Home = () => {
         },
       })
       .then((res) => {
-        setName(res.data.results.name);
-        setPhone(res.data.results.phone);
+        setName(res?.data?.results?.name);
+        setPhone(res?.data?.results?.phone);
+      })
+      .catch((error) => {
+        if (error.response.status === 401 || error.code === 401) {
+          navigate("/");
+        }
       });
   }, []);
 
   useEffect(() => {
     axios
       .get(`${REACT_APP_DOMAIN}api/chat/chat-lists/${id}`)
-      .then((res) => setChannels(res.data.data))
+      .then((res) => {
+        // console.log("channel response", res.data.data);
+        if (res.data.status === "OK" || res.status === 200 || res.data.code === 200) {
+          setChannels(res?.data?.data);
+          // console.log("channels data", res.data.data);
+        }
+      })
       .catch((err) => console.log(err));
-  }, []);
+  }, [change]);
 
   useEffect(() => {
     socket.on("receive_message", (data) => {
+      const dataSocket = data.data;
+      console.log("send user name", name);
+      console.log("socket received user name", data.data.user.userName);
       // console.log(data.data);
-      setOldMessages((oldmessages) => [...oldmessages, data.data]);
+      setOldMessages((oldmessages) => [...oldmessages, data?.data]);
+      // console.log("socket ", data.data);
+      if (data.data.user.userName !== name) {
+        toast(`${dataSocket.user.userName} : ${dataSocket.message}`);
+        audioPlayer.current.play();
+      }
+      // setNoti(() => data.data.user.userName);
+      // setNotiMessage(() => data.data.message);
+      // console.log(noti);
+    });
+  }, [socket]);
+
+  useEffect(() => {
+    socket.on("getNotification", (data) => {
+      console.log("TZ");
+      console.log(data);
     });
   }, [socket]);
 
@@ -120,24 +186,33 @@ const Home = () => {
   // oldmessages.reverse();
   console.log("old messages", oldmessages);
 
+  // useEffect(() => {
+  //   return () => {
+  //     if (noti !== name) {
+  //       toast(`${noti} : ${notiMessage}`);
+  //       audioPlayer.current.play();
+  //     }
+  //   };
+  // }, [noti]);
+
   const sendHandler = (e) => {
-    setMessage("");
-    if (title.name === undefined) {
+    setMessageData("");
+    if (title?.name === undefined) {
       alert("Please Select A Channel");
     } else {
       e.preventDefault();
       axios
         .post(`${REACT_APP_DOMAIN}api/chat`, {
           channel: {
-            channelId: title.id,
-            channelName: title.name,
+            channelId: title?.id,
+            channelName: title?.name,
           },
           media: null,
           mension: false,
           mensionUser: [],
-          message: message,
+          message: messageData,
           replyMessage: null,
-          replyUseName: null,
+          replyUserName: null,
           seenUser: [],
           time: new Date().toLocaleTimeString(),
           type: 0,
@@ -147,8 +222,9 @@ const Home = () => {
           },
         })
         .then((response) => {
-          if (response.data.status === "success") {
-            console.log("send message");
+          if (response?.data?.status === "success" || response?.code === 200) {
+            setChange(!change);
+            console.log("sent message");
           }
         })
         .catch((error) => {
@@ -156,10 +232,31 @@ const Home = () => {
         });
     }
   };
-  console.log("channel name", title.name);
+  // console.log("channel name", title?.name);
 
+  // const handleFileChange = (e: changeEvent<HTMLInputElement>) => {
+  //   if (e.target.files) {
+  //     setFile(e.target.files[0]);
+  //     setMessageData(file);
+  //     console.log("file", file);
+  //   }
+  // };
+  console.log("channel data", channels);
   return (
     <div className={classes.home}>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
+      <audio ref={audioPlayer} src={NotificationSound} />
       <div className={classes.container}>
         {/* Sidebar */}
         <div className={classes.sidebar}>
@@ -214,6 +311,7 @@ const Home = () => {
               </Select>
             </FormControl>
           </div>
+
           {/* Latest UI Update */}
           <div className={classes.channel}>
             <div className={classes.head}>
@@ -221,58 +319,68 @@ const Home = () => {
               <BsFillGearFill></BsFillGearFill>
             </div>
             <div className={classes.sidebarHeight}>
-              {channels?.length === 0 ? (
-                <p>There is no channels</p>
-              ) : (
-                channels.map((channel, index) => {
+              {channels?.length !== 0 ? (
+                channels?.map((item, index) => (
                   // console.log("HI");
-                  // console.log(channel);
-                  // const [arr] = channel?.latest_messages;
-                  // const channelId = arr?.channel?.channelId;
-                  // console.log(channelId);
+                  // console.log(item);
+                  // const [arr] = item?.latest_messages;
+                  // const itemId = arr?.item?.itemId;
+                  // console.log(itemId);
                   // console.log(arr);
-                  return (
-                    <div
-                      className={classes.container1}
-                      key={index}
-                      onClick={() => {
-                        console.log(channel.id);
-                        console.log("channel data", channel);
-                        setTitle({
-                          name: channel?.name,
-                          id: channel?.id,
-                        });
-                        axios
-                          .get(`${REACT_APP_DOMAIN}api/chat/messages/channel/${channel.id}`)
-                          .then((res) => setOldMessages(res.data.data.reverse()))
-                          .catch((err) => console.log(err));
-                      }}>
-                      <div className={classes.text}>
-                        <div>
-                          <img src={img} style={{ width: "50px" }}></img>
-                        </div>
-                        <div className={classes.team}>
-                          <p style={{ fontSize: "14px", fontWeight: "bold" }}>{channel?.name}</p>
-                          <span
-                            style={{ fontSize: "14px", fontWeight: "bold", marginRight: "10px" }}>
-                            {channel?.latest_messages[0]?.user?.userName}
-                          </span>
-                          <span>{channel?.latest_messages[0]?.message}</span>
-                          <span
-                            style={{ fontSize: "10px", marginLeft: "90px" }}
-                            className={classes.date}>
-                            {channel?.latest_messages[0].time}
-                          </span>
-                        </div>
+                  <div
+                    className={classes.container1}
+                    key={index}
+                    onClick={() => {
+                      // console.log(item?.id);
+                      // console.log("item data", item);
+                      setTitle({
+                        name: item?.name,
+                        id: item?.id,
+                      });
+                      axios
+                        .get(`${REACT_APP_DOMAIN}api/chat/messages/channel/${item?.id}`)
+                        .then((res) => {
+                          console.log(res);
+                          if (res.status === 200 || res.data.status === 200) {
+                            setOldMessages(res?.data?.data?.reverse());
+                            // console.log("channel data", res.data);
+                          }
+                        })
+                        .catch((err) => console.log(err));
+                    }}>
+                    <div className={classes.text}>
+                      <div>
+                        <img src={img} style={{ width: "50px" }} />
+                      </div>
+                      <div className={classes.team}>
+                        <p style={{ fontSize: "14px", fontWeight: "bold" }}>{item?.name}</p>
+                        <span style={{ fontSize: "14px", fontWeight: "bold", marginRight: "10px" }}>
+                          {/* {item?.latest_messages[0]?.user?.userName} */}{" "}
+                          {item.latest_messages[0]?.user.userName}
+                        </span>
+                        <span>
+                          {item?.latest_messages[0].message.length >= 19
+                            ? item?.latest_messages[0]?.message.slice(0, 20) + "....."
+                            : item.latest_messages[0].message}
+                          {/* {item.latest_message[0].message} */}
+                        </span>
+                        <span
+                          style={{ fontSize: "10px", marginLeft: "90px" }}
+                          className={classes.date}>
+                          {item?.latest_messages[0]?.time}
+                        </span>
                       </div>
                     </div>
-                  );
-                })
+                  </div>
+                ))
+              ) : (
+                <p>There is no channels</p>
               )}
             </div>
           </div>
         </div>
         {/* Sidebar */}
+
         {/* Chat */}
         <div className={classes.chat}>
           {/* Header */}
@@ -280,18 +388,33 @@ const Home = () => {
             <div className={classes.channel1}>
               <BsArrowLeft style={{ marginRight: "20px" }}></BsArrowLeft>
               {/* <img src={img} style={{ width: "30px", height: "30px" }}></img> */}
-              {title.name !== "" ? <p>{title.name}</p> : <p>Please Select Channel</p>}
+              {title?.name !== "" ? <p>{title?.name}</p> : <p></p>}
             </div>
 
             <div className="">
               <BsSearch></BsSearch>
-              {title.name === undefined ? (
+              {title?.name === undefined ? (
                 <div></div>
               ) : (
                 ["right"].map((anchor) => (
                   <React.Fragment key={anchor}>
                     <Button onClick={toggleDrawer(anchor, true)}>
-                      <InfoIcon />
+                      <InfoIcon
+                        onClick={() => {
+                          axios
+                            .get(`${REACT_APP_DOMAIN}api/channels/${title.id}`, {
+                              method: "GET",
+                              headers: {
+                                "x-access-token": token,
+                              },
+                            })
+                            .then((res) => {
+                              console.log("TZ");
+                              console.log(res);
+                              setUsers(res.data.results.users);
+                            });
+                        }}
+                      />
                     </Button>
                     <SwipeableDrawer
                       anchor={anchor}
@@ -309,7 +432,7 @@ const Home = () => {
           {/* messages section */}
           <ScrollToBottom>
             <div className={classes.messageContainer1}>
-              {oldmessages.map((oldmessage, index) => {
+              {oldmessages?.map((oldmessage, index) => {
                 return (
                   <div
                     key={index}
@@ -319,13 +442,13 @@ const Home = () => {
                     <div className={classes.textContainer}>
                       <div className={classes.cir}>{oldmessage?.user?.userName?.slice(0, 1)}</div>
                       <div>
-                        {oldmessage.media ? (
-                          <img src={oldmessage.media} className={classes.image}></img>
+                        {oldmessage?.media ? (
+                          <img src={oldmessage?.media} className={classes.image}></img>
                         ) : (
                           <>
                             {" "}
-                            <p className={classes.chat}>{oldmessage.message}</p>
-                            <span className={classes.time}>{oldmessage.time}</span>
+                            <p className={classes.chat}>{`${oldmessage?.message}`}</p>
+                            <span className={classes.time}>{oldmessage?.time}</span>
                           </>
                         )}
                       </div>
@@ -343,11 +466,12 @@ const Home = () => {
             <input
               className={classes.input}
               placeholder="Type a Message"
-              value={message}
+              value={messageData}
               onChange={(e) => {
-                setMessage(e.target.value);
+                setMessageData(e.target.value);
               }}></input>
             <div className={classes.send}>
+              {/* <EmojiPicker Theme={auto} emojiStyle={apple} /> */}
               <BsEmojiLaughing></BsEmojiLaughing>
               <input type="file" style={{ display: "none" }} id="file"></input>
               <label htmlFor="file" style={{ marginLeft: "20px" }}>

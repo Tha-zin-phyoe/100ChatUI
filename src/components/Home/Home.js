@@ -123,6 +123,7 @@ const Home = () => {
         // console.log("channel response", res.data.data);
         if (res.data.status === "OK" || res.status === 200 || res.data.code === 200) {
           setChannels(res?.data?.data);
+          // console.log("channels data", res.data.data);
         }
       })
       .catch((err) => console.log(err));
@@ -197,7 +198,7 @@ const Home = () => {
         .then((response) => {
           if (response?.data?.status === "success" || response?.code === 200) {
             setChange(!change);
-            console.log("send message");
+            console.log("sent message");
           }
         })
         .catch((error) => {
@@ -205,7 +206,7 @@ const Home = () => {
         });
     }
   };
-  console.log("channel name", title?.name);
+  // console.log("channel name", title?.name);
 
   // const handleFileChange = (e: changeEvent<HTMLInputElement>) => {
   //   if (e.target.files) {
@@ -214,7 +215,7 @@ const Home = () => {
   //     console.log("file", file);
   //   }
   // };
-
+  console.log("channel data", channels);
   return (
     <div className={classes.home}>
       <ToastContainer
@@ -316,6 +317,7 @@ const Home = () => {
                           console.log(res);
                           if (res.status === 200 || res.data.status === 200) {
                             setOldMessages(res?.data?.data?.reverse());
+                            // console.log("channel data", res.data);
                           }
                         })
                         .catch((err) => console.log(err));
@@ -331,7 +333,7 @@ const Home = () => {
                           {item.latest_messages[0]?.user.userName}
                         </span>
                         <span>
-                          {item?.latest_messages[0]?.message}
+                          {item?.latest_messages[0]?.message.slice(0, 20) + "....."}
                           {/* {item.latest_message[0].message} */}
                         </span>
                         <span

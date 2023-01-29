@@ -53,6 +53,7 @@ const Home = () => {
   const [noti, setNoti] = useState("");
   const [notiMessage, setNotiMessage] = useState("");
   const [change, setChange] = useState(true);
+  const [users, setUsers] = useState([]);
 
   const audioPlayer = useRef(null);
 
@@ -89,9 +90,34 @@ const Home = () => {
             Channel Name
           </div>
           <p style={{ textAlign: "center", fontWeight: 700 }}>{title.name}</p>
-          <span style={{ margin: "20px", fontSize: "14px", fontWeight: "600", color: "#7f7f7f" }}>
+          <div
+            style={{
+              margin: "20px",
+              marginBottom: "15px",
+              fontSize: "14px",
+              fontWeight: "600",
+              color: "#7f7f7f",
+            }}>
             Users
-          </span>
+          </div>
+          {users?.map((user, index) => (
+            <div
+              key={index}
+              className={classes.userContainer}
+              style={{ display: "flex", alignItems: "center" }}>
+              <img
+                src={img}
+                alt=""
+                style={{
+                  width: "30px",
+                  margin: "10px",
+                  border: "2px solid #7f7f7f",
+                  borderRadius: "50%",
+                }}
+              />
+              <p className={classes.userName}>{user.name}</p>
+            </div>
+          ))}
         </div>
       </List>
     </Box>
@@ -373,7 +399,22 @@ const Home = () => {
                 ["right"].map((anchor) => (
                   <React.Fragment key={anchor}>
                     <Button onClick={toggleDrawer(anchor, true)}>
-                      <InfoIcon />
+                      <InfoIcon
+                        onClick={() => {
+                          axios
+                            .get(`${REACT_APP_DOMAIN}api/channels/${title.id}`, {
+                              method: "GET",
+                              headers: {
+                                "x-access-token": token,
+                              },
+                            })
+                            .then((res) => {
+                              console.log("TZ");
+                              console.log(res);
+                              setUsers(res.data.results.users);
+                            });
+                        }}
+                      />
                     </Button>
                     <SwipeableDrawer
                       anchor={anchor}

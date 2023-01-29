@@ -333,7 +333,9 @@ const Home = () => {
                           {item.latest_messages[0]?.user.userName}
                         </span>
                         <span>
-                          {item?.latest_messages[0]?.message.slice(0, 20) + "....."}
+                          {item?.latest_messages[0].message.length >= 19
+                            ? item?.latest_messages[0]?.message.slice(0, 20) + "....."
+                            : item.latest_messages[0].message}
                           {/* {item.latest_message[0].message} */}
                         </span>
                         <span
@@ -404,7 +406,7 @@ const Home = () => {
                         ) : (
                           <>
                             {" "}
-                            <p className={classes.chat}>{oldmessage?.message}</p>
+                            <p className={classes.chat}>{`${oldmessage?.message}`}</p>
                             <span className={classes.time}>{oldmessage?.time}</span>
                           </>
                         )}

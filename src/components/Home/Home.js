@@ -1,13 +1,10 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef,createRef } from "react";
 import { BsFillGearFill, BsArrowLeft, BsSearch, BsEmojiLaughing } from "react-icons/bs";
-import InputLabel from "@mui/material/InputLabel";
 import Box from "@mui/material/Box";
-import PersonIcon from "@mui/icons-material/Person";
 import MenuItem from "@mui/material/MenuItem";
-import FormHelperText from "@mui/material/FormHelperText";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import { FaUser, FaPen, FaBell, FaPhoneAlt } from "react-icons/fa";
+import { FaUser, FaPhoneAlt ,FaBell} from "react-icons/fa";
 import { MdOutlineAttachFile, MdSend } from "react-icons/md";
 import img from "../../assets/logo.png";
 import classes from "./Home.module.css";
@@ -16,25 +13,17 @@ import axios from "axios";
 import ScrollToBottom from "react-scroll-to-bottom";
 import { useNavigate } from "react-router-dom";
 import InfoIcon from "@mui/icons-material/Info";
-import EmojiPicker from "emoji-picker-react";
-
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import Button from "@mui/material/Button";
 import List from "@mui/material/List";
-import Divider from "@mui/material/Divider";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
-
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import NotificationSound from "../../assets/mixkit-interface-option-select-2573.wav";
+import EmojiPicker from 'emoji-picker-react';
 
+
+import NotificationSound from '../../assets/src_assets_mixkit-interface-option-select-2573.wav'
+import { dark } from "@mui/material/styles/createPalette";
 const socket = io.connect("https://www.accesses.app");
-
 const Home = () => {
   const [state, setState] = React.useState({
     right: false,
@@ -48,23 +37,23 @@ const Home = () => {
   const [phone, setPhone] = useState("");
   const [title, setTitle] = useState({});
   const [messageData, setMessageData] = useState("");
-  // const [file, setFile] = useState();
+  const [emoji,setEmoji]=useState(false);
   const navigate = useNavigate();
-  const [noti, setNoti] = useState("");
-  const [notiMessage, setNotiMessage] = useState("");
   const [change, setChange] = useState(true);
   const [users, setUsers] = useState([]);
-
   const audioPlayer = useRef(null);
+  const inputRef = createRef()
+  const pickEmoji=()=>{
 
-  // console.log(name);
-  // console.log(phone);
 
+  }
+  console.log(messageData)
+ 
+// Drawer
   const toggleDrawer = (anchor, open) => (event) => {
     if (event && event.type === "keydown" && (event.key === "Tab" || event.key === "Shift")) {
       return;
     }
-
     setState({ ...state, [anchor]: open });
   };
   const list = (anchor) => (
@@ -123,6 +112,8 @@ const Home = () => {
     </Box>
   );
 
+  
+// AutoLogin
   useEffect(() => {
     axios
       .get(`${REACT_APP_DOMAIN}api/auth/user`, {
@@ -142,6 +133,8 @@ const Home = () => {
       });
   }, []);
 
+
+  // ChatLists
   useEffect(() => {
     axios
       .get(`${REACT_APP_DOMAIN}api/chat/chat-lists/${id}`)
@@ -160,42 +153,24 @@ const Home = () => {
       const dataSocket = data.data;
       console.log("send user name", name);
       console.log("socket received user name", data.data.user.userName);
+
       // console.log(data.data);
       setOldMessages((oldmessages) => [...oldmessages, data?.data]);
-      // console.log("socket ", data.data);
-      if (data.data.user.userName !== name) {
+      if (dataSocket.user.userName !== name) {
         toast(`${dataSocket.user.userName} : ${dataSocket.message}`);
         audioPlayer.current.play();
       }
-      // setNoti(() => data.data.user.userName);
-      // setNotiMessage(() => data.data.message);
-      // console.log(noti);
+      
     });
   }, [socket]);
 
-  useEffect(() => {
-    socket.on("getNotification", (data) => {
-      console.log("TZ");
-      console.log(data);
-    });
-  }, [socket]);
+const sendEmoji=(e)=>{
+  let emoji='';
 
-  // useEffect(() => {
-  //   oldmessages.reverse();
-  // }, [oldmessages]);
-  // oldmessages.reverse();
-  console.log("old messages", oldmessages);
-
-  // useEffect(() => {
-  //   return () => {
-  //     if (noti !== name) {
-  //       toast(`${noti} : ${notiMessage}`);
-  //       audioPlayer.current.play();
-  //     }
-  //   };
-  // }, [noti]);
-
+}
+  // Send Message
   const sendHandler = (e) => {
+    
     setMessageData("");
     if (title?.name === undefined) {
       alert("Please Select A Channel");
@@ -224,29 +199,21 @@ const Home = () => {
         .then((response) => {
           if (response?.data?.status === "success" || response?.code === 200) {
             setChange(!change);
-            console.log("sent message");
+            
           }
         })
         .catch((error) => {
           console.log(error);
         });
     }
+    setEmoji(false)
   };
-  // console.log("channel name", title?.name);
-
-  // const handleFileChange = (e: changeEvent<HTMLInputElement>) => {
-  //   if (e.target.files) {
-  //     setFile(e.target.files[0]);
-  //     setMessageData(file);
-  //     console.log("file", file);
-  //   }
-  // };
-  console.log("channel data", channels);
+ 
   return (
     <div className={classes.home}>
       <ToastContainer
         position="top-right"
-        autoClose={5000}
+        autoClose={2000}
         hideProgressBar={false}
         newestOnTop={false}
         closeOnClick
@@ -297,6 +264,7 @@ const Home = () => {
                     <div className={classes.notification}>
                       <FaPhoneAlt style={{ color: "gray" }}></FaPhoneAlt>
                       <p>Calls</p>
+                    
                     </div>
                   </MenuItem>
 
@@ -321,18 +289,12 @@ const Home = () => {
             <div className={classes.sidebarHeight}>
               {channels?.length !== 0 ? (
                 channels?.map((item, index) => (
-                  // console.log("HI");
-                  // console.log(item);
-                  // const [arr] = item?.latest_messages;
-                  // const itemId = arr?.item?.itemId;
-                  // console.log(itemId);
-                  // console.log(arr);
+    
                   <div
                     className={classes.container1}
                     key={index}
                     onClick={() => {
-                      // console.log(item?.id);
-                      // console.log("item data", item);
+                  
                       setTitle({
                         name: item?.name,
                         id: item?.id,
@@ -343,7 +305,7 @@ const Home = () => {
                           console.log(res);
                           if (res.status === 200 || res.data.status === 200) {
                             setOldMessages(res?.data?.data?.reverse());
-                            // console.log("channel data", res.data);
+                          
                           }
                         })
                         .catch((err) => console.log(err));
@@ -409,7 +371,7 @@ const Home = () => {
                               },
                             })
                             .then((res) => {
-                              console.log("TZ");
+                            
                               console.log(res);
                               setUsers(res.data.results.users);
                             });
@@ -445,14 +407,18 @@ const Home = () => {
                         {oldmessage?.media ? (
                           <img src={oldmessage?.media} className={classes.image}></img>
                         ) : (
-                          <>
+                          <div className={classes.replyIcon}>
                             {" "}
-                            <p className={classes.chat}>{`${oldmessage?.message}`}</p>
+                           <div>
+                           <p className={classes.chat}>{`${oldmessage?.message}`}</p>
                             <span className={classes.time}>{oldmessage?.time}</span>
-                          </>
+                          </div>
+
+                          </div>
                         )}
                       </div>
                     </div>
+                  
                   </div>
                 );
               })}
@@ -470,16 +436,25 @@ const Home = () => {
               onChange={(e) => {
                 setMessageData(e.target.value);
               }}></input>
+                   {
+                emoji?<EmojiPicker className={classes.emoji}
+                 height="300px" 
+                 width="700px"
+                 marginRight='0px'
+                 searchDisabled={true}
+                 Theme={dark}
+                 onEmojiClick={(e)=>setMessageData((prev)=>(prev+e.emoji))}
+                ></EmojiPicker>:""
+              }
             <div className={classes.send}>
-              {/* <EmojiPicker Theme={auto} emojiStyle={apple} /> */}
-              <BsEmojiLaughing></BsEmojiLaughing>
+              <BsEmojiLaughing onClick={()=>setEmoji(!emoji)}></BsEmojiLaughing>
               <input type="file" style={{ display: "none" }} id="file"></input>
               <label htmlFor="file" style={{ marginLeft: "20px" }}>
                 <MdOutlineAttachFile></MdOutlineAttachFile>
               </label>
             </div>
             <button
-              style={{ backgroundColor: "transparent", border: "none" }}
+              style={{ backgroundColor: "gray", border: "none" }}
               onClick={sendHandler}>
               <MdSend></MdSend>
             </button>

@@ -26,6 +26,10 @@
   width: 300px;
   box-shadow: none;
 }
+.bottom{
+  position: sticky;
+  z-index:1000
+}
 
 .head {
   display: flex;
@@ -308,4 +312,12 @@ input {
 }
 .userContainer:hover {
   background-color: aliceblue;
+}
+.replyIcon{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.emoji{
+  height:200px;
 }
